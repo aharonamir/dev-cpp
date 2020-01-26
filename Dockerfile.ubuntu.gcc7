@@ -1,0 +1,50 @@
+# FROM gcc:4.9
+
+# LABEL maintainer="amir.aharon@ipgallery.com"
+
+# WORKDIR /project
+
+# RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
+#   && apt-get update && apt-get -t jessie-backports install -y --no-install-recommends \
+#          gdb cmake \
+#   && apt-get clean \
+#   && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/jessie-backports.list
+
+FROM ubuntu:xenial
+LABEL maintainer="amir.aharon@ipgallery.com"
+
+
+VOLUME "/project"
+WORKDIR "/project"
+
+RUN apt-get update
+RUN apt-get install -y software-properties-common python-software-properties
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt-get update
+
+# RUN apt-get dist-upgrade -y
+RUN apt-get install gcc-7 g++-7 cmake gdb gdbserver wget -y  && \
+    apt-get clean autoclean && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+    # wget -O /tmp/conan.deb -L https://github.com/conan-io/conan/releases/download/0.25.1/conan-ubuntu-64_0_25_1.deb && \
+    # dpkg -i /tmp/conan.deb
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 999 \
+ && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 999 \
+ && update-alternatives --install /usr/bin/cc  cc  /usr/bin/gcc-7 999 \
+ && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-7 999
+
+ADD ./scripts/cmake-build.sh /build.sh
+RUN chmod +x /build.sh
+
+RUN useradd -ms /bin/bash develop
+RUN echo "develop   ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+EXPOSE 2000
+
+USER develop
+VOLUME "/home/develop/project"
+WORKDIR "/home/develop/project"
+
+#ENTRYPOINT exec /build.sh
