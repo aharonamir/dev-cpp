@@ -23,13 +23,19 @@ RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt-get update
 
 # RUN apt-get dist-upgrade -y
-RUN apt-get install gcc-7 g++-7 cmake gdb gdbserver wget -y  && \
+RUN apt-get install gcc-7 g++-7 gdb gdbserver wget -y  && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
     # wget -O /tmp/conan.deb -L https://github.com/conan-io/conan/releases/download/0.25.1/conan-ubuntu-64_0_25_1.deb && \
     # dpkg -i /tmp/conan.deb
 
+RUN cd /opt \
+ && wget https://cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz \
+ && tar xf cmake-3.10.1-Linux-x86_64.tar.gz \
+ && rm cmake-3.10.1-Linux-x86_64.tar.gz \
+ && ln -sf /opt/cmake-3.10.1-Linux-x86_64/bin/cmake /usr/bin/cmake
+ 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 999 \
  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 999 \
  && update-alternatives --install /usr/bin/cc  cc  /usr/bin/gcc-7 999 \
