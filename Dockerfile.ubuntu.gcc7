@@ -23,7 +23,7 @@ RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt-get update
 
 # RUN apt-get dist-upgrade -y
-RUN apt-get install gcc-7 g++-7 gdb gdbserver wget -y  && \
+RUN apt-get install gcc-7 g++-7 make gdb gdbserver wget -y  && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
